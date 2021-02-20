@@ -1,7 +1,8 @@
 import './App.css';
+import Components from './Components';
 
 function App() {
-  return <div></div>;
+  return <Components />;
 }
 
 export default App;
