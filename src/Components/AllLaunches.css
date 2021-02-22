@@ -13,12 +13,37 @@ td {
   text-align: left;
   font-weight: normal;
 }
+.mainContainer {
+  width: 100%;
+  max-width: 1220px;
+  margin: auto;
+}
 .dataContainer {
-  width: 943px;
+  width: 100%;
+  min-height: 664px;
   box-shadow: 0 0 5px grey;
   border-radius: 4px;
-  margin: auto;
+  overflow: hidden;
 }
 .loadingBox {
   text-align: center;
+}
+.failed,
+.success,
+.upcoming {
+  border-radius: 20px;
+  padding: 7px 18px;
+  /* width: 82px; */
+}
+.upcoming {
+  background: #fef3c7;
+  color: #92400f;
+}
+.failed {
+  background: #fde2e1;
+  color: #981b1c;
+}
+.success {
+  background: #def7ec;
+  color: #03543f;
 }
