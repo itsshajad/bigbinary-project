@@ -13,3 +13,12 @@ td {
   text-align: left;
   font-weight: normal;
 }
+.dataContainer {
+  width: 943px;
+  box-shadow: 0 0 5px grey;
+  border-radius: 4px;
+  margin: auto;
+}
+.loadingBox {
+  text-align: center;
+}

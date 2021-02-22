@@ -1,0 +1,7 @@
+.pagination ul {
+  list-style: none;
+  display: inline;
+}
+.pagination ul li {
+  padding: 5px;
+}
