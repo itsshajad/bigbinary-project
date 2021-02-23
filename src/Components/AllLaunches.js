@@ -10,8 +10,9 @@ const AllLaunches = (props) => {
   const [loading, SetLoading] = useState(true);
   const [currentPage, SetCurrentPage] = useState(1);
   const [listPerPage] = useState(12);
+  const [apiParameter, setApiParameter] = useState('');
 
-  const url = 'https://api.spacexdata.com/v3/launches';
+  const url = `https://api.spacexdata.com/v3/launches${apiParameter}`;
 
   useEffect(() => {
     async function loadData() {
@@ -31,10 +32,26 @@ const AllLaunches = (props) => {
 
   const pagination = (pageNumber) => SetCurrentPage(pageNumber);
 
+  const change = (e) => {
+    console.log(e);
+  };
+
   return (
     <>
       <Header />
+
       <div className="mainContainer">
+        <div className="filterBar">
+          <div>filter</div>
+          <div>
+            <select name="" id="" onChange={change}>
+              <option value="">All Launches</option>
+              <option value="">Upcoming Launches</option>
+              <option value="">Successful Launches</option>
+              <option value="">Failed Launches</option>
+            </select>
+          </div>
+        </div>
         <div className="dataContainer">
           <DataList loading={loading} data={activePage} />
         </div>

@@ -8,7 +8,6 @@ const DataList = ({ loading, data }) => {
   const handleToggle = (currentPopup) => {
     setOpen(true);
     setCurrentPopup(currentPopup);
-    console.log(currentPopup);
   };
 
   const closePopup = () => {
@@ -21,7 +20,7 @@ const DataList = ({ loading, data }) => {
         <thead>
           <tr>
             <th>No:</th>
-            <th>Launches (UTC):</th>
+            <th>Launches (UTC)</th>
             <th>Location</th>
             <th>Mission</th>
             <th>Orbit</th>
