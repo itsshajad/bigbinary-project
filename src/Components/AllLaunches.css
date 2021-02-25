@@ -24,7 +24,16 @@ td {
   margin-top: 30px;
   margin-bottom: 30px;
 }
+.filterDropdown {
+  padding: 15px;
+  width: 200px;
+  height: 42px;
+}
 
+.filterDropdown select {
+  width: 100%;
+  height: 40px;
+}
 .dataContainer {
   width: 100%;
   min-height: 664px;

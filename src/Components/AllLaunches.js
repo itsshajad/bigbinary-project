@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useHistory } from 'react-router-dom';
 
 import './AllLaunches.css';
 import Header from './Header';
@@ -10,31 +11,63 @@ const AllLaunches = (props) => {
   const [loading, SetLoading] = useState(true);
   const [currentPage, SetCurrentPage] = useState(1);
   const [listPerPage] = useState(12);
-  const [apiParameter, setApiParameter] = useState('');
+  const [value, setValue] = useState('');
+  const [newData, setNewData] = useState([]);
 
-  const url = `https://api.spacexdata.com/v3/launches${apiParameter}`;
+  const history = useHistory();
+
+  const urlValue = new URLSearchParams(window.location.search).get('launches');
+
+  console.log(urlValue);
 
   useEffect(() => {
+    const url = `https://api.spacexdata.com/v3/launches`;
+    const param = new URLSearchParams();
+
     async function loadData() {
       const response = await fetch(url);
       const allData = await response.json();
       setData(allData);
+      setNewData(allData);
       SetLoading(false);
+      setValue(urlValue);
     }
-    loadData();
-  }, []);
+    if (value === 'all') {
+      return setNewData(data);
+    } else if (value === 'upcoming') {
+      return setNewData(data.filter((upcoming) => upcoming.upcoming));
+    } else if (value === 'successfull') {
+      return setNewData(
+        data.filter((launch_success) => launch_success?.launch_success)
+      );
+    } else if (value === 'failed') {
+      return setNewData(
+        data.filter(
+          (launch_success) =>
+            !launch_success?.launch_success && !launch_success?.upcoming
+        )
+      );
+    } else {
+      setNewData(data);
+    }
 
-  // get current post
+    if (value) {
+      param.append('launches', value);
+    } else {
+      param.delete('launches');
+    }
+    history.push({ search: param.toString() });
+
+    loadData();
+  }, [urlValue, data, value, history]);
+
+  console.log(value);
 
   const lastPage = currentPage * listPerPage;
   const firstPage = lastPage - listPerPage;
-  const activePage = data.slice(firstPage, lastPage);
+  const activePage = newData.slice(firstPage, lastPage);
 
   const pagination = (pageNumber) => SetCurrentPage(pageNumber);
-
-  const change = (e) => {
-    console.log(e);
-  };
 
   return (
     <>
@@ -43,23 +76,28 @@ const AllLaunches = (props) => {
       <div className="mainContainer">
         <div className="filterBar">
           <div>filter</div>
-          <div>
-            <select name="" id="" onChange={change}>
-              <option value="">All Launches</option>
-              <option value="">Upcoming Launches</option>
-              <option value="">Successful Launches</option>
-              <option value="">Failed Launches</option>
+
+          {/* select option */}
+          <div className={'filterDropdown'}>
+            <select value={value} onChange={(e) => setValue(e.target.value)}>
+              <option value="">select</option>
+              <option value="all">All Launches</option>
+              <option value="upcoming">Upcoming Launches</option>
+              <option value="successfull">Successful Launches</option>
+              <option value="failed">Failed Launches</option>
             </select>
           </div>
         </div>
+
         <div className="dataContainer">
           <DataList loading={loading} data={activePage} />
         </div>
+
         <Pagination
           listPerPage={listPerPage}
           pagination={pagination}
           currentPage={currentPage}
-          totalPage={data.length}
+          totalPage={newData.length}
         />
       </div>
     </>

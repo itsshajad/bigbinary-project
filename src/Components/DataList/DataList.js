@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
-import DataPopup from './DataPopup/DataPopup';
+import moment from 'moment';
+
+import DataPopup from './DataPopup';
 
 const DataList = ({ loading, data }) => {
   const [open, setOpen] = useState(false);
@@ -34,7 +36,10 @@ const DataList = ({ loading, data }) => {
             {data.map((list, key) => (
               <tr key={key} onClick={() => handleToggle(key)}>
                 <td>{list?.flight_number}</td>
-                <td>{list?.launch_date_utc}</td>
+                <td>
+                  {moment(list?.launch_date_utc).format('DD MMMM YYYY hh:mm')}{' '}
+                  at {moment(list?.launch_date_utc).format(' hh:mm')}
+                </td>
                 <td>{list?.launch_site.site_name}</td>
                 <td>{list?.mission_name}</td>
                 <td>{list?.rocket?.second_stage?.payloads[0]?.orbit}</td>
