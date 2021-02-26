@@ -11,19 +11,16 @@ const AllLaunches = (props) => {
   const [loading, SetLoading] = useState(true);
   const [currentPage, SetCurrentPage] = useState(1);
   const [listPerPage] = useState(12);
-  const [value, setValue] = useState('');
+  const [value, setValue] = useState('all');
   const [newData, setNewData] = useState([]);
 
   const history = useHistory();
 
-  const urlValue = new URLSearchParams(window.location.search).get('launches');
-
-  console.log(urlValue);
-
   useEffect(() => {
     const url = `https://api.spacexdata.com/v3/launches`;
-    const param = new URLSearchParams();
-
+    const urlValue = new URLSearchParams(window.location.search).get(
+      'launches'
+    );
     async function loadData() {
       const response = await fetch(url);
       const allData = await response.json();
@@ -32,25 +29,11 @@ const AllLaunches = (props) => {
       SetLoading(false);
       setValue(urlValue);
     }
-    if (value === 'all') {
-      return setNewData(data);
-    } else if (value === 'upcoming') {
-      return setNewData(data.filter((upcoming) => upcoming.upcoming));
-    } else if (value === 'successfull') {
-      return setNewData(
-        data.filter((launch_success) => launch_success?.launch_success)
-      );
-    } else if (value === 'failed') {
-      return setNewData(
-        data.filter(
-          (launch_success) =>
-            !launch_success?.launch_success && !launch_success?.upcoming
-        )
-      );
-    } else {
-      setNewData(data);
-    }
+    loadData();
+  }, []);
 
+  useEffect(() => {
+    const param = new URLSearchParams();
     if (value) {
       param.append('launches', value);
     } else {
@@ -58,10 +41,29 @@ const AllLaunches = (props) => {
     }
     history.push({ search: param.toString() });
 
-    loadData();
-  }, [urlValue, data, value, history]);
-
-  console.log(value);
+    if (value) {
+      if (value === 'all') {
+        return setNewData(data);
+      } else if (value === 'upcoming') {
+        return setNewData(data.filter((upcoming) => upcoming.upcoming));
+      } else if (value === 'successfull') {
+        return setNewData(
+          data.filter((launch_success) => launch_success?.launch_success)
+        );
+      } else if (value === 'failed') {
+        return setNewData(
+          data.filter(
+            (launch_success) =>
+              !launch_success?.launch_success && !launch_success?.upcoming
+          )
+        );
+      } else {
+        setNewData(data);
+      }
+    } else {
+      console.log('nul');
+    }
+  }, [value, history, data]);
 
   const lastPage = currentPage * listPerPage;
   const firstPage = lastPage - listPerPage;
@@ -80,7 +82,6 @@ const AllLaunches = (props) => {
           {/* select option */}
           <div className={'filterDropdown'}>
             <select value={value} onChange={(e) => setValue(e.target.value)}>
-              <option value="">select</option>
               <option value="all">All Launches</option>
               <option value="upcoming">Upcoming Launches</option>
               <option value="successfull">Successful Launches</option>
