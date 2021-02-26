@@ -5,6 +5,7 @@ import './AllLaunches.css';
 import Header from './Header';
 import DataList from './DataList';
 import Pagination from './Pagination';
+import DatePicker from './DatePicker/DatePicker';
 
 const AllLaunches = (props) => {
   const [data, setData] = useState([]);
@@ -41,27 +42,21 @@ const AllLaunches = (props) => {
     }
     history.push({ search: param.toString() });
 
-    if (value) {
-      if (value === 'all') {
-        return setNewData(data);
-      } else if (value === 'upcoming') {
-        return setNewData(data.filter((upcoming) => upcoming.upcoming));
-      } else if (value === 'successfull') {
-        return setNewData(
-          data.filter((launch_success) => launch_success?.launch_success)
-        );
-      } else if (value === 'failed') {
-        return setNewData(
-          data.filter(
-            (launch_success) =>
-              !launch_success?.launch_success && !launch_success?.upcoming
-          )
-        );
-      } else {
-        setNewData(data);
-      }
-    } else {
-      console.log('nul');
+    if (value === 'all') {
+      return setNewData(data);
+    } else if (value === 'upcoming') {
+      return setNewData(data.filter((upcoming) => upcoming.upcoming));
+    } else if (value === 'successfull') {
+      return setNewData(
+        data.filter((launch_success) => launch_success?.launch_success)
+      );
+    } else if (value === 'failed') {
+      return setNewData(
+        data.filter(
+          (launch_success) =>
+            !launch_success?.launch_success && !launch_success?.upcoming
+        )
+      );
     }
   }, [value, history, data]);
 
@@ -77,7 +72,7 @@ const AllLaunches = (props) => {
 
       <div className="mainContainer">
         <div className="filterBar">
-          <div>filter</div>
+          <DatePicker />
 
           {/* select option */}
           <div className={'filterDropdown'}>
