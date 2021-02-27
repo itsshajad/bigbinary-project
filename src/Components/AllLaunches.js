@@ -12,33 +12,42 @@ const AllLaunches = (props) => {
   const [loading, SetLoading] = useState(true);
   const [currentPage, SetCurrentPage] = useState(1);
   const [listPerPage] = useState(12);
-  const [value, setValue] = useState('all');
+  const [value, setValue] = useState('');
+  const [start, setStart] = useState('');
+  const [end, setEnd] = useState('');
   const [newData, setNewData] = useState([]);
 
   const history = useHistory();
 
+  const dateFilter = `start=${start}&end=${end}`;
+
   useEffect(() => {
-    const url = `https://api.spacexdata.com/v3/launches`;
+    const url = `https://api.spacexdata.com/v3/launches?${dateFilter}`;
     const urlValue = new URLSearchParams(window.location.search).get(
       'launches'
     );
+    console.log(url);
     async function loadData() {
-      const response = await fetch(url);
-      const allData = await response.json();
-      setData(allData);
-      setNewData(allData);
+      const data = await fetch(url)
+        .then((response) => response.json())
+        .catch((error) => error);
+
+      setData(data);
+      setNewData(data);
       SetLoading(false);
       setValue(urlValue);
     }
     loadData();
-  }, []);
+  }, [dateFilter]);
 
   useEffect(() => {
     const param = new URLSearchParams();
-    if (value) {
+    if (value || start || end) {
+      param.append('start', start);
+      param.append('end', end);
       param.append('launches', value);
     } else {
-      param.delete('launches');
+      param.delete('start', 'end', 'launches');
     }
     history.push({ search: param.toString() });
 
@@ -58,7 +67,7 @@ const AllLaunches = (props) => {
         )
       );
     }
-  }, [value, history, data]);
+  }, [value, history, data, end, start]);
 
   const lastPage = currentPage * listPerPage;
   const firstPage = lastPage - listPerPage;
@@ -72,11 +81,14 @@ const AllLaunches = (props) => {
 
       <div className="mainContainer">
         <div className="filterBar">
-          <DatePicker />
+          <DatePicker setStart={setStart} setEnd={setEnd} />
 
           {/* select option */}
           <div className={'filterDropdown'}>
-            <select value={value} onChange={(e) => setValue(e.target.value)}>
+            <select
+              value={value ? value : 'all'}
+              onChange={(e) => setValue(e.target.value)}
+            >
               <option value="all">All Launches</option>
               <option value="upcoming">Upcoming Launches</option>
               <option value="successfull">Successful Launches</option>
