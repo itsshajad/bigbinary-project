@@ -2,7 +2,7 @@ import React from 'react';
 
 const DataPopup = ({ handleClose, data }) => {
   return (
-    <div className="container">
+    <div className="popupContainer">
       <div className="popupBody">
         <span className={'close'} onClick={handleClose}>
           &#x2715;
