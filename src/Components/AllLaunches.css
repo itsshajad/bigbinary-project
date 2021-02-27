@@ -16,6 +16,8 @@ td {
 .mainContainer {
   width: 100%;
   max-width: 1220px;
+  padding-right: 24px;
+  padding-left: 24px;
   margin: auto;
 }
 .filterBar {
@@ -24,6 +26,29 @@ td {
   margin-top: 30px;
   margin-bottom: 30px;
 }
+
+.datePickerBody {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  /* align-items: center; */
+}
+.datePickerBody .rightColumn {
+  text-align: center;
+}
+.datePickerBody .leftColumn {
+  border-right: 1px solid rgb(170, 170, 170);
+  padding-right: 15px;
+  /* min-width: ; */
+}
+.datePickerBody .leftColumn ul {
+  list-style-type: none;
+}
+.datePickerBody .leftColumn ul li {
+  padding-top: 5px;
+  padding-bottom: 5px;
+  cursor: pointer;
+}
+
 .filterDropdown {
   padding: 15px;
   width: 200px;
@@ -41,7 +66,7 @@ td {
   border-radius: 4px;
   overflow: hidden;
 }
-.loadingBox {
+.text-center {
   text-align: center;
 }
 .failed,
@@ -62,7 +87,7 @@ td {
   background: #def7ec;
   color: #03543f;
 }
-.container {
+.popupContainer {
   position: fixed;
   top: 0;
   left: 0;
@@ -74,11 +99,11 @@ td {
   display: grid;
   align-items: center;
   justify-content: center;
+  overflow: auto;
 }
 
 .popupBody {
   width: 544px;
-  min-height: 740px;
   background: #ffffff;
   box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.1);
   border-radius: 6px;
@@ -87,7 +112,8 @@ td {
 }
 .close {
   position: absolute;
-  right: 35px;
+  right: 14px;
+  top: 14px;
   cursor: pointer;
   padding: 5px;
 }
