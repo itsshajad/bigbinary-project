@@ -1,80 +1,114 @@
 import React, { useEffect, useState } from 'react';
+import { useHistory } from 'react-router-dom';
 
 import './AllLaunches.css';
+import Header from './Header';
+import DataList from './DataList';
 import Pagination from './Pagination';
+import DatePicker from './DatePicker/DatePicker';
 
 const AllLaunches = (props) => {
   const [data, setData] = useState([]);
   const [loading, SetLoading] = useState(true);
   const [currentPage, SetCurrentPage] = useState(1);
+  const [listPerPage] = useState(12);
+  const [value, setValue] = useState('');
+  const [start, setStart] = useState('');
+  const [end, setEnd] = useState('');
+  const [newData, setNewData] = useState([]);
 
-  const url = 'https://api.spacexdata.com/v3/launches';
+  const history = useHistory();
+
+  const dateFilter = `start=${start}&end=${end}`;
 
   useEffect(() => {
+    const url = `https://api.spacexdata.com/v3/launches?${dateFilter}`;
+    const urlValue = new URLSearchParams(window.location.search).get(
+      'launches'
+    );
+    console.log(url);
     async function loadData() {
-      const response = await fetch(url);
-      const allData = await response.json();
-      setData(allData);
+      const data = await fetch(url)
+        .then((response) => response.json())
+        .catch((error) => error);
+
+      setData(data);
+      setNewData(data);
       SetLoading(false);
+      setValue(urlValue);
     }
     loadData();
-  }, []);
+  }, [dateFilter]);
 
-  // get current post
+  useEffect(() => {
+    const param = new URLSearchParams();
+    if (value || start || end) {
+      param.append('start', start);
+      param.append('end', end);
+      param.append('launches', value);
+    } else {
+      param.delete('start', 'end', 'launches');
+    }
+    history.push({ search: param.toString() });
 
-  const firstPost = 1 * 12;
-  const lastPost = firstPost - 12;
-  const currentPost = data.slice(1, 12);
-  console.log(
-    firstPost,
-    lastPost,
-    currentPost,
-    'length is ' + Math.floor(data.length / 12)
-  );
+    if (value === 'all') {
+      return setNewData(data);
+    } else if (value === 'upcoming') {
+      return setNewData(data.filter((upcoming) => upcoming.upcoming));
+    } else if (value === 'successfull') {
+      return setNewData(
+        data.filter((launch_success) => launch_success?.launch_success)
+      );
+    } else if (value === 'failed') {
+      return setNewData(
+        data.filter(
+          (launch_success) =>
+            !launch_success?.launch_success && !launch_success?.upcoming
+        )
+      );
+    }
+  }, [value, history, data, end, start]);
+
+  const lastPage = currentPage * listPerPage;
+  const firstPage = lastPage - listPerPage;
+  const activePage = newData.slice(firstPage, lastPage);
+
+  const pagination = (pageNumber) => SetCurrentPage(pageNumber);
 
   return (
-    <div className="dataContainer">
-      <>
-        <table>
-          <thead>
-            <tr>
-              <th>No:</th>
-              <th>Launches (UTC):</th>
-              <th>Location</th>
-              <th>Mission</th>
-              <th>Orbit</th>
-              <th>Launches Status</th>
-              <th>Rocket</th>
-            </tr>
-          </thead>
+    <>
+      <Header />
 
-          {!loading ? (
-            <tbody>
-              {currentPost.map((post, key) => (
-                <tr key={key}>
-                  <td>{post.flight_number}</td>
-                  <td>{post.launch_date_utc}</td>
-                  <td>{post.launch_site.site_name}</td>
-                  <td>{post.mission_name}</td>
-                  <td>{post.rocket.second_stage.payloads[0].orbit}</td>
-                  <td>{post.launch_success ? 'Success' : 'Failed'}</td>
-                  <td>{post.rocket.rocket_name}</td>
-                </tr>
-              ))}
-            </tbody>
-          ) : (
-            <tbody>
-              <tr>
-                <td colSpan={'7'} className="loadingBox">
-                  <img src="https://media3.giphy.com/media/3oEjI6SIIHBdRxXI40/200.gif" />
-                </td>
-              </tr>
-            </tbody>
-          )}
-        </table>
-      </>
-      <Pagination />
-    </div>
+      <div className="mainContainer">
+        <div className="filterBar">
+          <DatePicker setStart={setStart} setEnd={setEnd} />
+
+          {/* select option */}
+          <div className={'filterDropdown'}>
+            <select
+              value={value ? value : 'all'}
+              onChange={(e) => setValue(e.target.value)}
+            >
+              <option value="all">All Launches</option>
+              <option value="upcoming">Upcoming Launches</option>
+              <option value="successfull">Successful Launches</option>
+              <option value="failed">Failed Launches</option>
+            </select>
+          </div>
+        </div>
+
+        <div className="dataContainer">
+          <DataList loading={loading} data={activePage} />
+        </div>
+
+        <Pagination
+          listPerPage={listPerPage}
+          pagination={pagination}
+          currentPage={currentPage}
+          totalPage={newData.length}
+        />
+      </div>
+    </>
   );
 };
 
