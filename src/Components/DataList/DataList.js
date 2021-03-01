@@ -8,14 +8,16 @@ const DataList = ({ loading, data }) => {
 
   const [currentPopup, setCurrentPopup] = useState();
 
-  const handleToggle = (currentPopup) => {
+  const handleOpen = (currentPopup) => {
     setOpen(true);
-
     setCurrentPopup(currentPopup);
+
+    document.querySelector('body').style.overflow = 'hidden';
   };
 
-  const closePopup = () => {
+  const handleClose = () => {
     setOpen(false);
+    document.querySelector('body').style.overflow = 'auto';
   };
 
   return (
@@ -37,7 +39,7 @@ const DataList = ({ loading, data }) => {
           <tbody>
             {data.length > 0 ? (
               data.map((list, key) => (
-                <tr key={key} onClick={() => handleToggle(key)}>
+                <tr key={key} onClick={() => handleOpen(key)}>
                   <td>{list?.flight_number}</td>
                   <td>
                     {moment(list?.launch_date_utc).format('DD MMMM YYYY hh:mm')}{' '}
@@ -87,7 +89,9 @@ const DataList = ({ loading, data }) => {
           </tbody>
         )}
       </table>
-      {open && <DataPopup data={data[currentPopup]} handleClose={closePopup} />}
+      {open && (
+        <DataPopup data={data[currentPopup]} handleClose={handleClose} />
+      )}
     </>
   );
 };
