@@ -1,16 +1,17 @@
 import React from 'react';
-
-const Pagination = ({ pagination, totalPage, listPerPage, currentPage }) => {
+const Pagination = ({ pagination, totalList, listPerPage, currentPage }) => {
   const pageNumber = [];
-
-  for (let i = 1; i <= Math.ceil(totalPage / listPerPage); i++) {
+  const totalPage = Math.ceil(totalList / listPerPage);
+  for (let i = 1; i <= totalPage; i++) {
     pageNumber.push(i);
   }
+  // page decrement
   const PageDecrease = () => {
     if (currentPage > 1) {
       pagination(currentPage - 1);
     }
   };
+  // page increment
   const PageIncrease = () => {
     if (currentPage < pageNumber.length) {
       pagination(currentPage + 1);
@@ -18,17 +19,39 @@ const Pagination = ({ pagination, totalPage, listPerPage, currentPage }) => {
   };
   return (
     <div className="pagination">
-      <ul>
-        <li onClick={PageDecrease}> {'<'} </li>
-        {pageNumber.map((pageNumber) => (
+      {pageNumber.length > 4 && (
+        <ul>
+          <li
+            className={currentPage > 1 ? '' : 'disabledPagination'}
+            onClick={PageDecrease}
+          >
+            {'<'}
+          </li>
+          <li onClick={() => pagination(currentPage + 1)}>{currentPage + 1}</li>
+          {currentPage === totalPage ? (
+            <li onClick={() => PageDecrease()}>...</li>
+          ) : null}
+          <li onClick={() => PageIncrease(currentPage + 2)}>
+            {currentPage + 2}
+          </li>
+          {currentPage < totalPage ? (
+            <li onClick={() => PageIncrease()}>...</li>
+          ) : null}
+          <li onClick={() => pagination(totalPage)}>{totalPage}</li>
+          <li
+            className={currentPage >= totalPage ? 'disabledPagination' : ''}
+            onClick={PageIncrease}
+          >
+            {'>'}
+          </li>
+          {/* {pageNumber.map((pageNumber) => (
           <li onClick={() => pagination(pageNumber)} key={pageNumber}>
             {pageNumber}
           </li>
-        ))}
-        <li onClick={PageIncrease}> {'>'} </li>
-      </ul>
+        ))} */}
+        </ul>
+      )}
     </div>
   );
 };
-
 export default Pagination;

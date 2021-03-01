@@ -1,11 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import moment from 'moment';
-
 const DatePicker = ({ setEnd, setStart }) => {
   const [open, setOpen] = useState(false);
-  const [startDate, setStartDate] = useState('2015-06-22');
-  const [endDate, setEndDate] = useState(moment().format('YYYY-MM-DD'));
-
+  const [startDate] = useState('2015-06-22');
+  const [endDate] = useState(moment().format('YYYY-MM-DD'));
   const handleOpen = () => {
     setOpen(!open);
     if (!open) {
@@ -14,20 +12,16 @@ const DatePicker = ({ setEnd, setStart }) => {
       document.querySelector('body').style.overflow = 'auto';
     }
   };
-
   useEffect(() => {
     const urlValue = new URLSearchParams(window.location.search);
 
-    console.log(urlValue.get('start'), urlValue.get('end'));
-
-    setEnd(urlValue.get('end'));
-    setStart(urlValue.get('start'));
+    setEnd(urlValue.get('end') ? urlValue.get('end') : endDate);
+    setStart(urlValue.get('start') ? urlValue.get('start') : startDate);
   }, [setEnd, setStart, startDate, endDate]);
 
   return (
     <div>
       <h3 onClick={handleOpen}>{startDate ? startDate : ' select'}</h3>
-
       {open && (
         <div className="popupContainer">
           <div className="popupBody">
@@ -81,7 +75,6 @@ const DatePicker = ({ setEnd, setStart }) => {
                   </li>
                 </ul>
               </div>
-
               <div className="rightColumn">
                 <input
                   type="date"
@@ -101,5 +94,4 @@ const DatePicker = ({ setEnd, setStart }) => {
     </div>
   );
 };
-
 export default DatePicker;

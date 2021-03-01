@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
-
 import './AllLaunches.css';
 import Header from './Header';
 import DataList from './DataList';
@@ -12,37 +11,21 @@ const AllLaunches = (props) => {
   const [loading, SetLoading] = useState(true);
   const [currentPage, SetCurrentPage] = useState(1);
   const [listPerPage] = useState(12);
-  const [value, setValue] = useState('');
+  const [value, setValue] = useState('all');
   const [start, setStart] = useState('');
   const [end, setEnd] = useState('');
   const [newData, setNewData] = useState([]);
-
   const history = useHistory();
 
   const dateFilter = `start=${start}&end=${end}`;
 
-  useEffect(() => {
-    const url = `https://api.spacexdata.com/v3/launches?${dateFilter}`;
-    const urlValue = new URLSearchParams(window.location.search).get(
-      'launches'
-    );
-    console.log(url);
-    async function loadData() {
-      const data = await fetch(url)
-        .then((response) => response.json())
-        .catch((error) => error);
-
-      setData(data);
-      setNewData(data);
-      SetLoading(false);
-      setValue(urlValue);
-    }
-    loadData();
-  }, [dateFilter]);
+  const url =
+    start && end && `https://api.spacexdata.com/v3/launches?${dateFilter}`;
 
   useEffect(() => {
     const param = new URLSearchParams();
-    if (value || start || end) {
+
+    if (value && start && end) {
       param.append('start', start);
       param.append('end', end);
       param.append('launches', value);
@@ -54,20 +37,40 @@ const AllLaunches = (props) => {
     if (value === 'all') {
       return setNewData(data);
     } else if (value === 'upcoming') {
-      return setNewData(data.filter((upcoming) => upcoming.upcoming));
+      return setNewData(data && data.filter((upcoming) => upcoming.upcoming));
     } else if (value === 'successfull') {
       return setNewData(
-        data.filter((launch_success) => launch_success?.launch_success)
+        data && data.filter((launch_success) => launch_success?.launch_success)
       );
     } else if (value === 'failed') {
       return setNewData(
-        data.filter(
-          (launch_success) =>
-            !launch_success?.launch_success && !launch_success?.upcoming
-        )
+        data &&
+          data.filter(
+            (launch_success) =>
+              !launch_success?.launch_success && !launch_success?.upcoming
+          )
       );
     }
   }, [value, history, data, end, start]);
+
+  useEffect(() => {
+    const urlValue = new URLSearchParams(window.location.search).get(
+      'launches'
+    );
+    console.log(urlValue);
+
+    async function loadData() {
+      const data = await fetch(url)
+        .then((response) => response.json())
+        .catch((error) => error);
+      setData(start && end && data);
+      setNewData(start && end && data);
+
+      setValue(urlValue);
+      SetLoading(false);
+    }
+    loadData();
+  }, [dateFilter, start, end, url]);
 
   const lastPage = currentPage * listPerPage;
   const firstPage = lastPage - listPerPage;
@@ -78,11 +81,9 @@ const AllLaunches = (props) => {
   return (
     <>
       <Header />
-
       <div className="mainContainer">
         <div className="filterBar">
           <DatePicker setStart={setStart} setEnd={setEnd} />
-
           {/* select option */}
           <div className={'filterDropdown'}>
             <select
@@ -96,20 +97,17 @@ const AllLaunches = (props) => {
             </select>
           </div>
         </div>
-
         <div className="dataContainer">
           <DataList loading={loading} data={activePage} />
         </div>
-
         <Pagination
           listPerPage={listPerPage}
           pagination={pagination}
           currentPage={currentPage}
-          totalPage={newData.length}
+          totalList={newData.length}
         />
       </div>
     </>
   );
 };
-
 export default AllLaunches;
