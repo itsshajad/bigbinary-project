@@ -83,7 +83,11 @@ const AllLaunches = (props) => {
       <Header />
       <div className="mainContainer">
         <div className="filterBar">
-          <DatePicker setStart={setStart} setEnd={setEnd} />
+          <DatePicker
+            SetLoading={SetLoading}
+            setStart={setStart}
+            setEnd={setEnd}
+          />
           {/* select option */}
           <div className={'filterDropdown'}>
             <select
