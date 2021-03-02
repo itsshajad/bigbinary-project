@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import moment from 'moment';
 
-const DatePicker = ({ setEnd, setStart }) => {
+const DatePicker = ({ setEnd, setStart, SetLoading }) => {
   const [open, setOpen] = useState(false);
-  const [startDate, setStartDate] = useState('2015-06-22');
-  const [endDate, setEndDate] = useState(moment().format('YYYY-MM-DD'));
+  const [startDate] = useState(moment().add(-6, 'month').format('YYYY-MM-DD'));
+
+  const [endDate] = useState(moment().format('YYYY-MM-DD'));
 
   const handleOpen = () => {
     setOpen(!open);
@@ -17,17 +18,13 @@ const DatePicker = ({ setEnd, setStart }) => {
 
   useEffect(() => {
     const urlValue = new URLSearchParams(window.location.search);
-
-    console.log(urlValue.get('start'), urlValue.get('end'));
-
-    setEnd(urlValue.get('end'));
-    setStart(urlValue.get('start'));
+    setEnd(urlValue.get('end') ? urlValue.get('end') : endDate);
+    setStart(urlValue.get('start') ? urlValue.get('start') : startDate);
   }, [setEnd, setStart, startDate, endDate]);
 
   return (
     <div>
-      <h3 onClick={handleOpen}>{startDate ? startDate : ' select'}</h3>
-
+      <h3 onClick={handleOpen}>{'Filter'}</h3>
       {open && (
         <div className="popupContainer">
           <div className="popupBody">
@@ -38,29 +35,33 @@ const DatePicker = ({ setEnd, setStart }) => {
               <div className="leftColumn">
                 <ul>
                   <li
-                    onClick={() =>
-                      setStart(moment().add(-1, 'week').format('YYYY-MM-DD'))
-                    }
+                    onClick={() => {
+                      setStart(moment().add(-1, 'week').format('YYYY-MM-DD'));
+                      SetLoading(true);
+                    }}
                   >
                     Past Week
                   </li>
                   <li
-                    onClick={() =>
-                      setStart(moment().add(-1, 'month').format('YYYY-MM-DD'))
-                    }
+                    onClick={() => {
+                      setStart(moment().add(-1, 'month').format('YYYY-MM-DD'));
+                      SetLoading(true);
+                    }}
                   >
                     Past Month
                   </li>
                   <li
-                    onClick={() =>
-                      setStart(moment().add(-3, 'month').format('YYYY-MM-DD'))
-                    }
+                    onClick={() => {
+                      setStart(moment().add(-3, 'month').format('YYYY-MM-DD'));
+                      SetLoading(true);
+                    }}
                   >
                     Past 3 Month
                   </li>
                   <li
                     onClick={() => {
                       setStart(moment().add(-6, 'month').format('YYYY-MM-DD'));
+                      SetLoading(true);
                     }}
                   >
                     Past 6 Month
@@ -68,30 +69,35 @@ const DatePicker = ({ setEnd, setStart }) => {
                   <li
                     onClick={() => {
                       setStart(moment().add(-1, 'y').format('YYYY-MM-DD'));
+                      SetLoading(true);
                     }}
                   >
-                    Past year
+                    Past Year
                   </li>
                   <li
                     onClick={() => {
                       setStart(moment().add(-2, 'y').format('YYYY-MM-DD'));
+                      SetLoading(true);
                     }}
                   >
-                    Past 2 year
+                    Past 2 Year
                   </li>
                 </ul>
               </div>
-
               <div className="rightColumn">
                 <input
                   type="date"
                   name="start"
-                  onChange={(e) => setStart(e.target.value)}
+                  onChange={(e) => {
+                    setStart(e.target.value);
+                  }}
                 />
                 <input
                   type="date"
                   name="end"
-                  onChange={(e) => setEnd(e.target.value)}
+                  onChange={(e) => {
+                    setEnd(e.target.value);
+                  }}
                 />
               </div>
             </div>
@@ -101,5 +107,4 @@ const DatePicker = ({ setEnd, setStart }) => {
     </div>
   );
 };
-
 export default DatePicker;
