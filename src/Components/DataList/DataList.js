@@ -5,7 +5,6 @@ import DataPopup from './DataPopup';
 
 const DataList = ({ loading, data }) => {
   const [open, setOpen] = useState(false);
-  console.log(data);
 
   const [currentPopup, setCurrentPopup] = useState();
 
@@ -80,7 +79,7 @@ const DataList = ({ loading, data }) => {
         ) : (
           <tbody>
             <tr>
-              <td className="text-center">
+              <td className="text-center" colSpan={'7'}>
                 <img
                   src="https://media3.giphy.com/media/3oEjI6SIIHBdRxXI40/200.gif"
                   alt=""

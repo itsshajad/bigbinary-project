@@ -45,7 +45,7 @@ const AllLaunches = (props) => {
   useEffect(() => {
     const param = new URLSearchParams();
 
-    if (value || start || end) {
+    if (start || end || value) {
       param.append('start', start);
       param.append('end', end);
       param.append('launches', value);
