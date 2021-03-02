@@ -5,6 +5,7 @@ const Pagination = ({ pagination, totalList, listPerPage, currentPage }) => {
   for (let i = 1; i <= totalPage; i++) {
     pageNumber.push(i);
   }
+
   // page decrement
   const PageDecrease = () => {
     if (currentPage > 1) {

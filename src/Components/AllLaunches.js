@@ -11,7 +11,7 @@ const AllLaunches = (props) => {
   const [loading, SetLoading] = useState(true);
   const [currentPage, SetCurrentPage] = useState(1);
   const [listPerPage] = useState(12);
-  const [value, setValue] = useState('all');
+  const [value, setValue] = useState('');
   const [start, setStart] = useState('');
   const [end, setEnd] = useState('');
   const [newData, setNewData] = useState([]);
@@ -19,58 +19,58 @@ const AllLaunches = (props) => {
 
   const dateFilter = `start=${start}&end=${end}`;
 
-  const url =
-    start && end && `https://api.spacexdata.com/v3/launches?${dateFilter}`;
-
   useEffect(() => {
-    const param = new URLSearchParams();
-
-    if (value && start && end) {
-      param.append('start', start);
-      param.append('end', end);
-      param.append('launches', value);
-    } else {
-      param.delete('start', 'end', 'launches');
-    }
-    history.push({ search: param.toString() });
-
-    if (value === 'all') {
-      return setNewData(data);
-    } else if (value === 'upcoming') {
-      return setNewData(data && data.filter((upcoming) => upcoming.upcoming));
-    } else if (value === 'successfull') {
-      return setNewData(
-        data && data.filter((launch_success) => launch_success?.launch_success)
-      );
-    } else if (value === 'failed') {
-      return setNewData(
-        data &&
-          data.filter(
-            (launch_success) =>
-              !launch_success?.launch_success && !launch_success?.upcoming
-          )
-      );
-    }
-  }, [value, history, data, end, start]);
-
-  useEffect(() => {
-    const urlValue = new URLSearchParams(window.location.search).get(
-      'launches'
-    );
-    console.log(urlValue);
+    const url = `https://api.spacexdata.com/v3/launches?${dateFilter}`;
 
     async function loadData() {
       const data = await fetch(url)
         .then((response) => response.json())
         .catch((error) => error);
-      setData(start && end && data);
-      setNewData(start && end && data);
+      setData(data);
+      setNewData(data);
 
-      setValue(urlValue);
       SetLoading(false);
     }
     loadData();
-  }, [dateFilter, start, end, url]);
+  }, [dateFilter]);
+
+  useEffect(() => {
+    const urlValue = new URLSearchParams(window.location.search).get(
+      'launches'
+    );
+
+    setValue(urlValue);
+  }, []);
+
+  useEffect(() => {
+    const param = new URLSearchParams();
+
+    if (value || start || end) {
+      param.append('start', start);
+      param.append('end', end);
+      param.append('launches', value);
+    } else {
+      param.delete('launches');
+    }
+    history.push({ search: param.toString() });
+
+    if (value === 'all') {
+      setNewData(data);
+    } else if (value === 'upcoming') {
+      setNewData(data.filter((upcoming) => upcoming.upcoming));
+    } else if (value === 'successfull') {
+      setNewData(
+        data.filter((launch_success) => launch_success?.launch_success)
+      );
+    } else if (value === 'failed') {
+      setNewData(
+        data.filter(
+          (launch_success) =>
+            !launch_success?.launch_success && !launch_success?.upcoming
+        )
+      );
+    }
+  }, [value, history, data, end, start]);
 
   const lastPage = currentPage * listPerPage;
   const firstPage = lastPage - listPerPage;

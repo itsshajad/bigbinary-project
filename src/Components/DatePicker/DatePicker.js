@@ -12,6 +12,7 @@ const DatePicker = ({ setEnd, setStart }) => {
       document.querySelector('body').style.overflow = 'auto';
     }
   };
+
   useEffect(() => {
     const urlValue = new URLSearchParams(window.location.search);
 

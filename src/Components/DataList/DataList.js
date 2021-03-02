@@ -5,6 +5,7 @@ import DataPopup from './DataPopup';
 
 const DataList = ({ loading, data }) => {
   const [open, setOpen] = useState(false);
+  console.log(data);
 
   const [currentPopup, setCurrentPopup] = useState();
 
@@ -71,7 +72,7 @@ const DataList = ({ loading, data }) => {
             ) : (
               <tr>
                 <td className="text-center" colSpan={'7'}>
-                  No Result Found for the specific filer
+                  No Result Found for the specific filter
                 </td>
               </tr>
             )}
